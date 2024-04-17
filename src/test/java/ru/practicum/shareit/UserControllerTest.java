@@ -111,7 +111,7 @@ public class UserControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8080/users/3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonStringUpdateUserOne))
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
     @Test

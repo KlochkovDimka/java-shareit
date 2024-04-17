@@ -39,6 +39,7 @@ public class UserStorageDao implements UserStorage {
 
     @Override
     public User updateUser(long id, User user) {
+        isUser(id);
         user.setId(id);
         updateFieldUser(user, id);
         users.put(id, user);
