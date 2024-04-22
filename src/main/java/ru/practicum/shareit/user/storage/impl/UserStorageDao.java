@@ -65,13 +65,11 @@ public class UserStorageDao implements UserStorage {
     }
 
     private void isEmailUser(User user) {
-        if (!users.isEmpty()) {
-            Optional<User> isUser = users.values().stream()
-                    .filter(user1 -> user1.getEmail().equals(user.getEmail()))
-                    .findFirst();
-            if (isUser.isPresent()) {
-                throw new NotExistUserEmailException(String.format("Email = %s уже существует", user.getEmail()));
-            }
+        Optional<User> isUser = users.values().stream()
+                .filter(user1 -> user1.getEmail().equals(user.getEmail()))
+                .findFirst();
+        if (isUser.isPresent()) {
+            throw new NotExistUserEmailException(String.format("Email = %s уже существует", user.getEmail()));
         }
     }
 

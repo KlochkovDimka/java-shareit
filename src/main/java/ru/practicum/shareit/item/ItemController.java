@@ -27,7 +27,7 @@ public class ItemController {
     }
 
     @GetMapping("{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") long itemId) {
+    public ItemDto getItemById(@PathVariable long itemId) {
         return itemService.getItemById(itemId);
     }
 
@@ -39,7 +39,7 @@ public class ItemController {
     @PatchMapping("{itemId}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto,
                               @RequestHeader("X-Sharer-User-Id") long userId,
-                              @PathVariable("itemId") long itemId) {
+                              @PathVariable long itemId) {
         ItemDto itemDto1 = itemService.updateItem(itemDto, userId, itemId);
         log.info("ItemController: update item {}", itemDto1);
         return itemDto1;
@@ -51,7 +51,7 @@ public class ItemController {
     }
 
     @DeleteMapping("{itemId}")
-    public void deleteItemById(@PathVariable("itemId") long itemId) {
+    public void deleteItemById(@PathVariable long itemId) {
         itemService.deleteItemById(itemId);
     }
 }
