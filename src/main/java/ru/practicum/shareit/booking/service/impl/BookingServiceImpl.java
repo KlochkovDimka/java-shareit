@@ -101,21 +101,27 @@ public class BookingServiceImpl implements BookingService {
         }
         List<Booking> bookings;
         switch (state) {
-            case "ALL" -> bookings = bookingStorage.findBookingByBooker_id(userId);
-            case "CURRENT" -> bookings = bookingStorage
-                    .findCurrentBookingsByUser(LocalDateTime.now(), userId);
-            case "PAST" -> bookings = bookingStorage
-                    .findBookingsByBookerIdAndEndBeforeOrderByStartAsc(userId, LocalDateTime.now());
-            case "FUTURE" -> bookings = bookingStorage
-                    .findBookingsByBookerIdAndStartAfterOrderByStartAsc(
-                            userId, LocalDateTime.now());
-            case "WAITING" -> bookings = bookingStorage
-                    .findBookingsByBookerIdAndStatusOrderByStartAsc(userId, Status.WAITING);
-            case "REJECTED" -> bookings = bookingStorage
-                    .findBookingsByBookerIdAndStatusOrderByStartAsc(userId, Status.REJECTED);
-            default -> throw new NotExistStatusName("Unknown state: UNSUPPORTED_STATUS");
+            case "ALL":
+                return BookingMapper.convertToListBookingDto(bookingStorage.findBookingByBooker_id(userId));
+            case "CURRENT":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findCurrentBookingsByUser(LocalDateTime.now(), userId));
+            case "PAST":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findBookingsByBookerIdAndEndBeforeOrderByStartAsc(userId, LocalDateTime.now()));
+            case "FUTURE":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findBookingsByBookerIdAndStartAfterOrderByStartAsc(
+                                userId, LocalDateTime.now()));
+            case "WAITING":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findBookingsByBookerIdAndStatusOrderByStartAsc(userId, Status.WAITING));
+            case "REJECTED":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findBookingsByBookerIdAndStatusOrderByStartAsc(userId, Status.REJECTED));
+            default:
+                throw new NotExistStatusName("Unknown state: UNSUPPORTED_STATUS");
         }
-        return BookingMapper.convertToListBookingDto(bookings);
     }
 
     @Override
@@ -125,19 +131,25 @@ public class BookingServiceImpl implements BookingService {
         }
         List<Booking> bookings;
         switch (state) {
-            case "ALL" -> bookings = bookingStorage.
-                    findAllBookingsByOwnerId(ownerId);
-            case "CURRENT" -> bookings = bookingStorage
-                    .findBookersByOwnerIdCurrent(ownerId, LocalDateTime.now());
-            case "PAST" -> bookings = bookingStorage
-                    .findBookersByOwnerIdPast(ownerId, LocalDateTime.now());
-            case "FUTURE" -> bookings = bookingStorage.
-                    findBookersByOwnerIdFuture(ownerId, LocalDateTime.now());
-            case "WAITING" -> bookings = bookingStorage.findBookersByOwnerIdStatus(ownerId, Status.WAITING);
-            case "REJECTED" -> bookings = bookingStorage.findBookersByOwnerIdStatus(ownerId, Status.REJECTED);
-            default -> throw new NotExistStatusName("Unknown state: UNSUPPORTED_STATUS");
+            case "ALL":
+                return BookingMapper.convertToListBookingDto(bookingStorage.
+                        findAllBookingsByOwnerId(ownerId));
+            case "CURRENT":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findBookersByOwnerIdCurrent(ownerId, LocalDateTime.now()));
+            case "PAST":
+                return BookingMapper.convertToListBookingDto(bookingStorage
+                        .findBookersByOwnerIdPast(ownerId, LocalDateTime.now()));
+            case "FUTURE":
+                return BookingMapper.convertToListBookingDto(bookingStorage.
+                        findBookersByOwnerIdFuture(ownerId, LocalDateTime.now()));
+            case "WAITING":
+                return BookingMapper.convertToListBookingDto(bookingStorage.findBookersByOwnerIdStatus(ownerId, Status.WAITING));
+            case "REJECTED":
+                return BookingMapper.convertToListBookingDto(bookingStorage.findBookersByOwnerIdStatus(ownerId, Status.REJECTED));
+            default:
+                throw new NotExistStatusName("Unknown state: UNSUPPORTED_STATUS");
         }
-        return BookingMapper.convertToListBookingDto(bookings);
     }
 
     private void isValidDate(LocalDateTime start, LocalDateTime end) {
