@@ -122,7 +122,6 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new NotExistStatusName("Unknown state: UNSUPPORTED_STATUS");
         }
-        return BookingMapper.convertToListBookingDto(bookings);
     }
 
     @Override
