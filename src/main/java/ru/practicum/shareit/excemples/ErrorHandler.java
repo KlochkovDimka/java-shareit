@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.NoSuchElementException;
+
 @RestControllerAdvice
 public class ErrorHandler {
 
@@ -14,7 +16,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(NotExistUserException.class)
+    @ExceptionHandler({NotExistUserException.class, NoSuchElementException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFound(RuntimeException e) {
         return new ErrorResponse(e.getMessage());
@@ -25,4 +27,7 @@ public class ErrorHandler {
     public ErrorResponse notBad(RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
+    @ExceptionHandler(NotExistStatusName.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse internalServerError(RuntimeException e){return new ErrorResponse(e.getMessage());}
 }

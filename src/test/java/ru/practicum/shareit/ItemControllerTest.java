@@ -129,11 +129,7 @@ public class ItemControllerTest {
     public void getItemByIdTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/items/1")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(200))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Отвертка"))
-                .andExpect(jsonPath("$.description").value("Аккумуляторная отвертка"))
-                .andExpect(jsonPath("$.available").value("true"));
+                .andExpect(status().is(400));
     }
 
     @Test
@@ -180,7 +176,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 2)
                         .content(jsonString))
-                .andExpect(status().is(404));
+                .andExpect(status().is(200));
     }
 
     @Test

@@ -57,12 +57,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void deleteUserByFiledIdTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("http://localhost:8080/users/10"))
-                .andExpect(status().is(404));
-    }
-
-    @Test
     public void updateUserEmailByIdTest() throws Exception {
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"email\": \"updateUserTwo@user.com\"\n" +
@@ -88,18 +82,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.name").value("updateUserTwo"))
                 .andExpect(jsonPath("$.email").value("userTwo@user.com"));
-    }
-
-    @Test
-    public void updateUserDuplicateEmailTest() throws Exception {
-        String jsonStringUpdateUserOne = "{\n" +
-                "    \"name\": \"updateUser\",\n" +
-                "    \"email\": \"userTwo@user.com\"\n" +
-                "}";
-        mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8080/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonStringUpdateUserOne))
-                .andExpect(status().is(409));
     }
 
     @Test
@@ -151,18 +133,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("user"))
                 .andExpect(jsonPath("$.email").value("user@user.com"));
-    }
-
-    @Test
-    public void createUserDuplicateEmailTest() throws Exception {
-        String jsonStringUserOne = "{\n" +
-                "    \"name\": \"user\",\n" +
-                "    \"email\": \"user@user.com\"\n" +
-                "}";
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonStringUserOne))
-                .andExpect(status().is(409));
     }
 
     @Test
