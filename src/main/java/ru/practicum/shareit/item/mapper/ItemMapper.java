@@ -22,19 +22,6 @@ public class ItemMapper {
         return itemDto;
     }
 
-    /*public static ItemDto convertToItemDto(Item item,
-                                           BookingItemDto lastBooking,
-                                           BookingItemDto nextBooking) {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setId(item.getId());
-        itemDto.setName(item.getName());
-        itemDto.setDescription(itemDto.getDescription());
-        itemDto.setAvailable(item.getAvailable());
-        itemDto.setLastBooking(lastBooking);
-        itemDto.setNextBooking(nextBooking);
-        return itemDto;
-    }*/
-
     public static Item convertToEntity(ItemDto itemDto, User userID) {
         return new Item(itemDto.getId(),
                 itemDto.getName(),

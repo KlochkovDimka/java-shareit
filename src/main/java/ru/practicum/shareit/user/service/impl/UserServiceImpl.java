@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.NestedServletException;
 import ru.practicum.shareit.excemples.NotExistUserEmailException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -61,6 +60,7 @@ public class UserServiceImpl implements UserService {
             throw new NotExistUserEmailException(String.format("Email = %s уже существует", user.getEmail()));
         }
     }
+
     private void updateFieldUser(User user, long id) {
         User oldUser = userStorage.findById(id).get();
         if (user.getEmail() == null) {

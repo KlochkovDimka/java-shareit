@@ -27,7 +27,10 @@ public class ErrorHandler {
     public ErrorResponse notBad(RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler(NotExistStatusName.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse internalServerError(RuntimeException e){return new ErrorResponse(e.getMessage());}
+    public ErrorResponse internalServerError(RuntimeException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }
