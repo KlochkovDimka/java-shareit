@@ -63,17 +63,16 @@ public class UserControllerTest {
 
     @Test
     public void updateUserNameByIdTest() throws Exception {
-
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"name\": \"updateUserTwo\"\n" +
                 "}";
-        mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8080/users/2")
+        mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8080/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonStringUpdateUserOne))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("updateUserTwo"))
-                .andExpect(jsonPath("$.email").value("user@user.com"));
+                .andExpect(jsonPath("$.email").value("updateUserTwo@user.com"));
     }
 
     @Test
@@ -90,15 +89,6 @@ public class UserControllerTest {
 
     @Test
     public void updateUserByIdTest() throws Exception {
-        String jsonStringUserOne = "{\n" +
-                "    \"name\": \"user\",\n" +
-                "    \"email\": \"user@user.com\"\n" +
-                "}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonStringUserOne));
-
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"name\": \"updateUser\",\n" +
                 "    \"email\": \"updateUser@user.com\"\n" +
