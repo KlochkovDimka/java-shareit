@@ -1,6 +1,5 @@
 package ru.practicum.shareit;
 
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,7 +18,7 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeClass
+    @Test
     public void createUserTest() throws Exception {
         String jsonStringUserOne = "{\n" +
                 "    \"name\": \"user\",\n" +
@@ -64,14 +63,6 @@ public class UserControllerTest {
 
     @Test
     public void updateUserNameByIdTest() throws Exception {
-        String jsonStringUserOne = "{\n" +
-                "    \"name\": \"user\",\n" +
-                "    \"email\": \"user@user.com\"\n" +
-                "}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonStringUserOne));
 
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"name\": \"updateUserTwo\"\n" +
@@ -125,7 +116,7 @@ public class UserControllerTest {
     public void getAllUSerTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/users")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$", hasSize(3)));
     }
 
 

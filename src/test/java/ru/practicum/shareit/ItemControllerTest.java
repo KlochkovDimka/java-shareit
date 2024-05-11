@@ -1,7 +1,6 @@
 package ru.practicum.shareit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +20,8 @@ public class ItemControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeClass
-    public void createUserAndItem() throws Exception {
+    @Test
+    public void CreateUserAndItem() throws Exception {
 
         String jsonStringItemOne = "{\n" +
                 "    \"name\": \"Отвертка\",\n" +
@@ -48,7 +47,7 @@ public class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .content(jsonString))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.id").value("2"))
                 .andExpect(jsonPath("$.name").value("Дрель"))
                 .andExpect(jsonPath("$.description").value("Простая дрель"))
                 .andExpect(jsonPath("$.available").value("true"));
@@ -139,7 +138,7 @@ public class ItemControllerTest {
                 "}";
         mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8080/items/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", 1)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(jsonString))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.id").value("1"))
