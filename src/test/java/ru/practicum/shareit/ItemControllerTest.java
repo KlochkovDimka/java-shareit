@@ -21,7 +21,7 @@ public class ItemControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void createUserAndItem() throws Exception {
+    public void createItemToTest() throws Exception {
 
         String jsonStringItemOne = "{\n" +
                 "    \"name\": \"Отвертка\",\n" +
@@ -30,26 +30,13 @@ public class ItemControllerTest {
                 "}";
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/items")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-Sharer-User-Id", 1)
-                .content(jsonStringItemOne));
-    }
-
-    @Test
-    public void createItemToTest() throws Exception {
-        String jsonString = "{\n" +
-                "    \"name\": \"Дрель\",\n" +
-                "    \"description\": \"Простая дрель\",\n" +
-                "    \"available\": true\n" +
-                "}";
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
-                        .content(jsonString))
+                        .content(jsonStringItemOne))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.id").value("2"))
-                .andExpect(jsonPath("$.name").value("Дрель"))
-                .andExpect(jsonPath("$.description").value("Простая дрель"))
+                .andExpect(jsonPath("$.name").value("Отвертка"))
+                .andExpect(jsonPath("$.description").value("Аккумуляторная отвертка"))
                 .andExpect(jsonPath("$.available").value("true"));
     }
 
@@ -122,6 +109,34 @@ public class ItemControllerTest {
 
     @Test
     public void getItemsByUserIdTest() throws Exception {
+        String jsonStringUserOne = "{\n" +
+                "    \"name\": \"user\",\n" +
+                "    \"email\": \"user@user.com\"\n" +
+                "}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonStringUserOne))
+                .andExpect(status().is(200))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("user"))
+                .andExpect(jsonPath("$.email").value("user@user.com"));
+
+        String jsonStringItemOne = "{\n" +
+                "    \"name\": \"Отвертка\",\n" +
+                "    \"description\": \"Аккумуляторная отвертка\",\n" +
+                "    \"available\": true\n" +
+                "}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1)
+                        .content(jsonStringItemOne))
+                .andExpect(status().is(200))
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.name").value("Отвертка"))
+                .andExpect(jsonPath("$.description").value("Аккумуляторная отвертка"))
+                .andExpect(jsonPath("$.available").value("true"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/items")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,6 +146,22 @@ public class ItemControllerTest {
 
     @Test
     public void updateItem() throws Exception {
+        String jsonStringItemOne = "{\n" +
+                "    \"name\": \"Отвертка\",\n" +
+                "    \"description\": \"Аккумуляторная отвертка\",\n" +
+                "    \"available\": true\n" +
+                "}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1)
+                        .content(jsonStringItemOne))
+                .andExpect(status().is(200))
+                .andExpect(jsonPath("$.id").value("3"))
+                .andExpect(jsonPath("$.name").value("Отвертка"))
+                .andExpect(jsonPath("$.description").value("Аккумуляторная отвертка"))
+                .andExpect(jsonPath("$.available").value("true"));
+
         String jsonString = "{\n" +
                 "    \"name\": \"Дрель\",\n" +
                 "    \"description\": \"Аккумуляторная дрель\",\n" +
@@ -138,7 +169,7 @@ public class ItemControllerTest {
                 "}";
         mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8080/items/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", 1L)
+                        .header("X-Sharer-User-Id", 1)
                         .content(jsonString))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.id").value("1"))
