@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 @Component
 public class BookingMapper {
 
+    private BookingMapper() {
+    }
+
     public static BookingDto convertToBookingDto(Booking booking) {
         return new BookingDto(
                 booking.getId(),

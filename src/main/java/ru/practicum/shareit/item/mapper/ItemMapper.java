@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 @Component
 public class ItemMapper {
 
+    private ItemMapper() {
+    }
+
     public static ItemDto convertToItemDto(Item item) {
         ItemDto itemDto = new ItemDto();
         itemDto.setId(item.getId());

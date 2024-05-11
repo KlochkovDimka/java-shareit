@@ -1,9 +1,15 @@
 package ru.practicum.shareit.item.comment;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class CommentMapper {
+
+    private CommentMapper() {
+    }
 
     public static CommentDto convertToCommentDto(Comment comment) {
         CommentDto commentDto = new CommentDto();
