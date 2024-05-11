@@ -94,8 +94,8 @@ public class ItemServiceImpl implements ItemService {
         User user = userStorage.findById(userId).get();
         itemDto.setId(itemId);
         Item item = ItemMapper.convertToEntity(itemDto, user);
-        item = updateFieldItem(item);
-        return ItemMapper.convertToItemDto(itemStorage.save(item));
+        Item newItem = updateFieldItem(item);
+        return ItemMapper.convertToItemDto(itemStorage.save(newItem));
     }
 
     @Override
