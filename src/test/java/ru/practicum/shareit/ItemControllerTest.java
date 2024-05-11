@@ -21,7 +21,7 @@ public class ItemControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void CreateUserAndItem() throws Exception {
+    public void createUserAndItem() throws Exception {
 
         String jsonStringItemOne = "{\n" +
                 "    \"name\": \"Отвертка\",\n" +
