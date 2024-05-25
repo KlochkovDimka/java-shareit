@@ -1,15 +1,13 @@
 package ru.practicum.shareit.item.comment;
 
-import org.springframework.stereotype.Component;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentMapper {
-
-    private CommentMapper() {
-    }
 
     public static CommentDto convertToCommentDto(Comment comment) {
         CommentDto commentDto = new CommentDto();

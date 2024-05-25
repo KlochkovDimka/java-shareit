@@ -2,8 +2,11 @@ package ru.practicum.shareit.booking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoController;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -67,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotExistUserException("Подтвердить может только хозяин вещи");
         }
         if (booking.getItem().getAvailable() && booking.getStatus() == Status.APPROVED) {
-            throw new NotExistItemException("Уже отвержденно");
+            throw new NotExistItemException("Уже подтвержденное");
         }
 
         Item item = booking.getItem();
@@ -95,14 +98,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByState(Long userId, String state) {
+    public List<BookingDto> getBookingsByState(Long userId, String state, int from, int size) {
+        PageRequest pageable = PageRequest.of(from, size, Sort.by("start").descending());
         if (userStorage.findById(userId).isEmpty()) {
             throw new NotExistUserException("Not user");
         }
-        List<Booking> bookings;
         switch (state) {
             case "ALL":
-                return BookingMapper.convertToListBookingDto(bookingStorage.findBookingByBooker_id(userId));
+                Page<Booking> bookingList = bookingStorage.findBookingByBooker_id(userId, pageable);
+                long lastPage = bookingList.getTotalElements() / bookingList.getSize();
+                if (lastPage <= from - 1) {
+                    return BookingMapper.convertToListBookingDto(
+                            bookingStorage.findBookingByBooker_id(userId, PageRequest.of(
+                                    (int) lastPage,
+                                    size,
+                                    Sort.by("start").descending())).getContent());
+                }
+                return BookingMapper.convertToListBookingDto(bookingList.getContent());
             case "CURRENT":
                 return BookingMapper.convertToListBookingDto(bookingStorage
                         .findCurrentBookingsByUser(LocalDateTime.now(), userId));
@@ -125,28 +137,54 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingByOwnerAndState(Long ownerId, String state) {
+    public List<BookingDto> getBookingByOwnerAndState(Long ownerId, String state, int from, int size) {
+        PageRequest pageable = PageRequest.of(from, size, Sort.by("start").descending());
         if (userStorage.findById(ownerId).isEmpty()) {
             throw new NotExistUserException("Not user");
         }
-        List<Booking> bookings;
         switch (state) {
             case "ALL":
-                return BookingMapper.convertToListBookingDto(bookingStorage
-                        .findAllBookingsByOwnerId(ownerId));
+                List<Booking> bookingList = bookingStorage.findAllBookingsByOwnerId(
+                                ownerId,
+                                pageable)
+                        .getContent();
+                List<BookingDto> bookingDtoList = BookingMapper.convertToListBookingDto(bookingList);
+                return bookingDtoList;
             case "CURRENT":
-                return BookingMapper.convertToListBookingDto(bookingStorage
-                        .findBookersByOwnerIdCurrent(ownerId, LocalDateTime.now()));
+                return BookingMapper.convertToListBookingDto(
+                        bookingStorage.findBookersByOwnerIdCurrent(
+                                        ownerId,
+                                        LocalDateTime.now(),
+                                        pageable)
+                                .getContent());
             case "PAST":
-                return BookingMapper.convertToListBookingDto(bookingStorage
-                        .findBookersByOwnerIdPast(ownerId, LocalDateTime.now()));
+                return BookingMapper.convertToListBookingDto(
+                        bookingStorage.findBookersByOwnerIdPast(
+                                        ownerId,
+                                        LocalDateTime.now(),
+                                        pageable)
+                                .getContent());
             case "FUTURE":
-                return BookingMapper.convertToListBookingDto(bookingStorage
-                        .findBookersByOwnerIdFuture(ownerId, LocalDateTime.now()));
+                return BookingMapper.convertToListBookingDto(
+                        bookingStorage.findBookersByOwnerIdFuture(
+                                        ownerId,
+                                        LocalDateTime.now(),
+                                        pageable)
+                                .getContent());
             case "WAITING":
-                return BookingMapper.convertToListBookingDto(bookingStorage.findBookersByOwnerIdStatus(ownerId, Status.WAITING));
+                return BookingMapper.convertToListBookingDto(
+                        bookingStorage.findBookersByOwnerIdStatus(
+                                        ownerId,
+                                        Status.WAITING,
+                                        pageable)
+                                .getContent());
             case "REJECTED":
-                return BookingMapper.convertToListBookingDto(bookingStorage.findBookersByOwnerIdStatus(ownerId, Status.REJECTED));
+                return BookingMapper.convertToListBookingDto(
+                        bookingStorage.findBookersByOwnerIdStatus(
+                                        ownerId,
+                                        Status.REJECTED,
+                                        pageable)
+                                .getContent());
             default:
                 throw new NotExistStatusName("Unknown state: UNSUPPORTED_STATUS");
         }

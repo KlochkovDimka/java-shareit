@@ -6,6 +6,5 @@ import ru.practicum.shareit.user.model.User;
 import java.util.Optional;
 
 public interface UserStorage extends JpaRepository<User, Long> {
-
     Optional<User> findUsersByEmail(String email);
 }
