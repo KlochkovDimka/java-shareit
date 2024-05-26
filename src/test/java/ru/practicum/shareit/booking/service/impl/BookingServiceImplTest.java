@@ -36,8 +36,8 @@ class BookingServiceImplTest {
     @InjectMocks
     private BookingServiceImpl bookingService;
 
-    private LocalDateTime start = LocalDateTime.of(2024, 5,5,12,12,12);
-    private LocalDateTime end = LocalDateTime.of(2024, 5,6,12,12,12);
+    private LocalDateTime start = LocalDateTime.of(2024, 5, 5, 12, 12, 12);
+    private LocalDateTime end = LocalDateTime.of(2024, 5, 6, 12, 12, 12);
     private User user = User.builder()
             .id(1L)
             .email("user@email.com")
@@ -107,6 +107,7 @@ class BookingServiceImplTest {
             .author(user)
             .created(start)
             .build();
+
     @Test
     void saveBooking() {
         when(itemStorage.findById(anyLong())).thenReturn(Optional.of(item));
@@ -123,7 +124,7 @@ class BookingServiceImplTest {
     void yesOrNoOfBookingRent() {
         booking.setStatus(Status.WAITING);
         when(bookingStorage.save(any())).thenReturn(booking);
-        when(bookingStorage.findById(anyLong())). thenReturn(Optional.of(booking));
+        when(bookingStorage.findById(anyLong())).thenReturn(Optional.of(booking));
 
         BookingDto newBookingDto = bookingService.yesOrNoOfBookingRent(1L, "APPROVED", 2L);
 
@@ -137,8 +138,8 @@ class BookingServiceImplTest {
 
         BookingDto newBookingDto = bookingService.getBookingById(1L, 1L);
 
-        assertEquals(newBookingDto.getId(),1);
-        assertEquals(newBookingDto.getStatus(),Status.APPROVED);
+        assertEquals(newBookingDto.getId(), 1);
+        assertEquals(newBookingDto.getStatus(), Status.APPROVED);
     }
 
 }
