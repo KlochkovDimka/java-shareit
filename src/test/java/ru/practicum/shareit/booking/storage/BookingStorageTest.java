@@ -97,7 +97,7 @@ class BookingStorageTest {
     @Test
     void findBookingByBooker_id() {
         List<Booking> bookingList = bookingStorage
-                .findBookingByBooker_id(5L, PageRequest.of(0, 1)).getContent();
+                .findBookingByBooker_id(1L, PageRequest.of(0, 1)).getContent();
 
         assertEquals(bookingList.size(), 1);
     }
@@ -112,7 +112,7 @@ class BookingStorageTest {
 
     @Test
     void findBookingsByBookerIdAndEndBeforeOrderByStartAsc() {
-        List<Booking> bookingList = bookingStorage.findBookingsByBookerIdAndEndBeforeOrderByStartAsc(12L,
+        List<Booking> bookingList = bookingStorage.findBookingsByBookerIdAndEndBeforeOrderByStartAsc(8L,
                 LocalDateTime.of(2024, 4, 3, 12, 12, 12));
 
         assertEquals(bookingList.size(), 1);
@@ -122,7 +122,7 @@ class BookingStorageTest {
     @Test
     void findBookingsByBookerIdAndStartAfterOrderByStartAsc() {
         List<Booking> bookingList = bookingStorage
-                .findBookingsByBookerIdAndStartAfterOrderByStartAsc(6L,
+                .findBookingsByBookerIdAndStartAfterOrderByStartAsc(2L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12));
 
         assertEquals(bookingList.size(), 2);
@@ -133,7 +133,7 @@ class BookingStorageTest {
     @Test
     void findBookingsByBookerIdAndStatusOrderByStartAsc() {
         List<Booking> bookingList = bookingStorage
-                .findBookingsByBookerIdAndStatusOrderByStartAsc(10L, Status.REJECTED);
+                .findBookingsByBookerIdAndStatusOrderByStartAsc(6L, Status.REJECTED);
 
         assertEquals(bookingList.size(), 1);
     }
@@ -142,7 +142,7 @@ class BookingStorageTest {
     void findBookingsByItemIdAndBookerIdAndEndBefore() {
         List<Booking> bookingList = bookingStorage
                 .findBookingsByItemIdAndBookerIdAndEndBefore(13L,
-                        17L,
+                        13L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12));
         assertEquals(bookingList.size(), 1);
     }
@@ -150,7 +150,7 @@ class BookingStorageTest {
     @Test
     void findAllBookingsByOwnerId() {
         List<Booking> bookingList = bookingStorage
-                .findAllBookingsByOwnerId(14L, PageRequest.of(0, 1)).getContent();
+                .findAllBookingsByOwnerId(10L, PageRequest.of(0, 1)).getContent();
 
         assertEquals(bookingList.size(), 1);
     }
@@ -158,7 +158,7 @@ class BookingStorageTest {
     @Test
     void findBookersByOwnerIdFuture() {
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdFuture(7L,
+                .findBookersByOwnerIdFuture(3L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12),
                         PageRequest.of(0, 1)).getContent();
 
@@ -169,7 +169,7 @@ class BookingStorageTest {
     @Test
     void findBookersByOwnerIdCurrent() {
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdCurrent(9L,
+                .findBookersByOwnerIdCurrent(5L,
                         LocalDateTime.of(2024, 5, 2, 14, 12, 12),
                         PageRequest.of(0, 1)).getContent();
 
@@ -178,9 +178,8 @@ class BookingStorageTest {
 
     @Test
     void findBookersByOwnerIdPast() {
-
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdPast(13L,
+                .findBookersByOwnerIdPast(9L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12),
                         PageRequest.of(0, 1)).getContent();
         assertEquals(bookingList.size(), 1);
@@ -190,7 +189,7 @@ class BookingStorageTest {
     void findBookersByOwnerIdStatus() {
         Pageable pageable = PageRequest.of(0, 1);
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdStatus(8L, Status.REJECTED, pageable).getContent();
+                .findBookersByOwnerIdStatus(4L, Status.REJECTED, pageable).getContent();
         assertEquals(bookingList.size(), 1);
     }
 

@@ -66,7 +66,7 @@ class CommentRepositoryTest {
 
     @Test
     void findByItem() {
-        List<Comment> newComment = commentRepository.findByItem(14L);
+        List<Comment> newComment = commentRepository.findByItem(4L);
         assertEquals(newComment.get(0).getId(), 1);
         assertEquals(newComment.get(0).getText(), "text");
     }

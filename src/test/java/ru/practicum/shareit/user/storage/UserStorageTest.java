@@ -29,7 +29,7 @@ class UserStorageTest {
     void findUsersByEmail() {
         Optional<User> user = userStorage.findUsersByEmail("user@email.com");
         assertTrue(user.isPresent());
-        assertEquals(user.get().getId(), 21);
+        assertEquals(user.get().getId(), 2);
         assertEquals(user.get().getName(), "user");
         assertEquals(user.get().getEmail(), "user@email.com");
     }

@@ -58,14 +58,14 @@ class ItemStorageTest {
     @Test
     void findItemByOwnerId() {
         Pageable pageable = PageRequest.of(0, 1);
-        User owner = userStorage.findById(23L).get();
+        User owner = userStorage.findById(2L).get();
         List<Item> items = itemStorage.findItemByOwnerId(owner, pageable).getContent();
         assertEquals(items.size(), 1);
-        assertEquals(items.get(0).getId(), 17);
+        assertEquals(items.get(0).getId(), 2);
         assertEquals(items.get(0).getName(), "Item");
         assertEquals(items.get(0).getDescription(), "ItemDescription");
         assertEquals(items.get(0).getAvailable(), true);
-        assertEquals(items.get(0).getOwnerId().getId(), 23);
+        assertEquals(items.get(0).getOwnerId().getId(), 2);
     }
 
     @Test
@@ -74,12 +74,12 @@ class ItemStorageTest {
         List<Item> itemDtoList = itemStorage.findItemsBySearchText("item", pageable).getContent();
         Item item = itemDtoList.get(0);
         assertEquals(itemDtoList.size(), 1);
-        assertEquals(item.getId(), 16);
+        assertEquals(item.getId(), 1);
     }
 
     @Test
     void findItemsByRequestId() {
-        Optional<ItemRequest> itemRequest = itemRequestStorage.findById(22L);
+        Optional<ItemRequest> itemRequest = itemRequestStorage.findById(3L);
         List<Item> items = itemStorage.findItemsByRequestId(itemRequest.get());
         assertEquals(1, items.size());
     }
