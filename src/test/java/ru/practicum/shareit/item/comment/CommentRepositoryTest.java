@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -19,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Slf4j
+@Transactional
+@Sql(scripts = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class CommentRepositoryTest {
 
     @Autowired
@@ -66,7 +70,7 @@ class CommentRepositoryTest {
 
     @Test
     void findByItem() {
-        List<Comment> newComment = commentRepository.findByItem(4L);
+        List<Comment> newComment = commentRepository.findByItem(1L);
         assertEquals(newComment.get(0).getId(), 1);
         assertEquals(newComment.get(0).getText(), "text");
     }

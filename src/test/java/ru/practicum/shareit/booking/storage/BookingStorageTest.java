@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
@@ -16,6 +18,7 @@ import ru.practicum.shareit.status.Status;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Slf4j
+@Transactional
+@Sql(scripts = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class BookingStorageTest {
     @Autowired
     BookingStorage bookingStorage;
@@ -112,7 +117,7 @@ class BookingStorageTest {
 
     @Test
     void findBookingsByBookerIdAndEndBeforeOrderByStartAsc() {
-        List<Booking> bookingList = bookingStorage.findBookingsByBookerIdAndEndBeforeOrderByStartAsc(8L,
+        List<Booking> bookingList = bookingStorage.findBookingsByBookerIdAndEndBeforeOrderByStartAsc(1L,
                 LocalDateTime.of(2024, 4, 3, 12, 12, 12));
 
         assertEquals(bookingList.size(), 1);
@@ -122,7 +127,7 @@ class BookingStorageTest {
     @Test
     void findBookingsByBookerIdAndStartAfterOrderByStartAsc() {
         List<Booking> bookingList = bookingStorage
-                .findBookingsByBookerIdAndStartAfterOrderByStartAsc(2L,
+                .findBookingsByBookerIdAndStartAfterOrderByStartAsc(1L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12));
 
         assertEquals(bookingList.size(), 2);
@@ -133,7 +138,7 @@ class BookingStorageTest {
     @Test
     void findBookingsByBookerIdAndStatusOrderByStartAsc() {
         List<Booking> bookingList = bookingStorage
-                .findBookingsByBookerIdAndStatusOrderByStartAsc(6L, Status.REJECTED);
+                .findBookingsByBookerIdAndStatusOrderByStartAsc(1L, Status.REJECTED);
 
         assertEquals(bookingList.size(), 1);
     }
@@ -141,8 +146,8 @@ class BookingStorageTest {
     @Test
     void findBookingsByItemIdAndBookerIdAndEndBefore() {
         List<Booking> bookingList = bookingStorage
-                .findBookingsByItemIdAndBookerIdAndEndBefore(13L,
-                        13L,
+                .findBookingsByItemIdAndBookerIdAndEndBefore(1L,
+                        1L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12));
         assertEquals(bookingList.size(), 1);
     }
@@ -150,7 +155,7 @@ class BookingStorageTest {
     @Test
     void findAllBookingsByOwnerId() {
         List<Booking> bookingList = bookingStorage
-                .findAllBookingsByOwnerId(10L, PageRequest.of(0, 1)).getContent();
+                .findAllBookingsByOwnerId(1L, PageRequest.of(0, 1)).getContent();
 
         assertEquals(bookingList.size(), 1);
     }
@@ -158,7 +163,7 @@ class BookingStorageTest {
     @Test
     void findBookersByOwnerIdFuture() {
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdFuture(3L,
+                .findBookersByOwnerIdFuture(1L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12),
                         PageRequest.of(0, 1)).getContent();
 
@@ -169,7 +174,7 @@ class BookingStorageTest {
     @Test
     void findBookersByOwnerIdCurrent() {
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdCurrent(5L,
+                .findBookersByOwnerIdCurrent(1L,
                         LocalDateTime.of(2024, 5, 2, 14, 12, 12),
                         PageRequest.of(0, 1)).getContent();
 
@@ -179,7 +184,7 @@ class BookingStorageTest {
     @Test
     void findBookersByOwnerIdPast() {
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdPast(9L,
+                .findBookersByOwnerIdPast(1L,
                         LocalDateTime.of(2024, 4, 3, 12, 12, 12),
                         PageRequest.of(0, 1)).getContent();
         assertEquals(bookingList.size(), 1);
@@ -189,14 +194,14 @@ class BookingStorageTest {
     void findBookersByOwnerIdStatus() {
         Pageable pageable = PageRequest.of(0, 1);
         List<Booking> bookingList = bookingStorage
-                .findBookersByOwnerIdStatus(4L, Status.REJECTED, pageable).getContent();
+                .findBookersByOwnerIdStatus(1L, Status.REJECTED, pageable).getContent();
         assertEquals(bookingList.size(), 1);
     }
 
     @Test
     void findTopByItemIdAndEndDate() {
         List<Booking> bookingList = bookingStorage
-                .findTopByItemIdAndEndDate(7L,
+                .findTopByItemIdAndEndDate(1L,
                         LocalDateTime.of(2024, 4, 2, 14, 12, 12));
         assertEquals(bookingList.size(), 2);
 
@@ -206,7 +211,7 @@ class BookingStorageTest {
     @Test
     void findTopByItemIdAndEndDateAfter() {
         List<Booking> bookingList = bookingStorage
-                .findTopByItemIdAndEndDateAfter(12L,
+                .findTopByItemIdAndEndDateAfter(1L,
                         LocalDateTime.of(2024, 5, 3, 12, 12, 12));
 
         assertEquals(bookingList.size(), 1);
