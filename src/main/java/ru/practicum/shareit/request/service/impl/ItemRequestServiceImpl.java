@@ -66,8 +66,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<ItemRequestDto> itemRequestDtoList = ItemRequestMapper.convertToListItemRequestDto(requests);
 
         itemRequestDtoList
-                .forEach(itemRequestDto -> itemRequestDto.
-                        setItems(findListItemDtoByRequestId(itemRequestDto)));
+                .forEach(itemRequestDto -> itemRequestDto
+                        .setItems(findListItemDtoByRequestId(itemRequestDto)));
 
         return itemRequestDtoList;
     }
