@@ -26,16 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommentRepositoryTest {
 
     @Autowired
-    private CommentRepository commentRepository;
+    CommentRepository commentRepository;
     @Autowired
-    private ItemStorage itemStorage;
+    ItemStorage itemStorage;
     @Autowired
-    private UserStorage userStorage;
+    UserStorage userStorage;
     @Autowired
-    private ItemRequestStorage itemRequestStorage;
+    ItemRequestStorage itemRequestStorage;
 
     @BeforeEach
-    private void createItemAndComment() {
+    void createItemAndComment() {
         User user = User.builder()
                 .email("user@email.com")
                 .name("user")

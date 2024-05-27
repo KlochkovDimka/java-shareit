@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.excemples.NotExistUserException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -16,7 +17,7 @@ import ru.practicum.shareit.request.storage.ItemRequestStorage;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
-import javax.transaction.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,6 +31,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemStorage itemStorage;
 
     @Override
+    @Transactional
     public ItemRequestDto createdItemRequest(ItemRequestDto itemRequestDto, Long userId) {
 
         User user = isUserItemRequest(userId);
@@ -41,6 +43,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getListItemRequestByUserId(Long userId) {
         isUserItemRequest(userId);
 
@@ -48,15 +51,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<ItemRequestDto> itemRequestDtoList = ItemRequestMapper.convertToListItemRequestDto(itemRequest);
 
         itemRequestDtoList
-                .forEach(itemRequestDto -> {
-                    itemRequestDto.setItems(findListItemDtoByRequestId(itemRequestDto));
-                });
+                .forEach(itemRequestDto -> itemRequestDto
+                        .setItems(findListItemDtoByRequestId(itemRequestDto)));
 
         return itemRequestDtoList;
     }
 
-    @Transactional
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getAllListItemRequest(long userid, int from, int size) {
         PageRequest pageable = PageRequest.of(from, size);
         List<ItemRequest> requests =
@@ -64,14 +66,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<ItemRequestDto> itemRequestDtoList = ItemRequestMapper.convertToListItemRequestDto(requests);
 
         itemRequestDtoList
-                .forEach(itemRequestDto -> {
-                    itemRequestDto.setItems(findListItemDtoByRequestId(itemRequestDto));
-                });
+                .forEach(itemRequestDto -> itemRequestDto.
+                        setItems(findListItemDtoByRequestId(itemRequestDto)));
 
         return itemRequestDtoList;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemRequestDto getItemRequestById(Long userId, Long requestId) {
         isUserItemRequest(userId);
 

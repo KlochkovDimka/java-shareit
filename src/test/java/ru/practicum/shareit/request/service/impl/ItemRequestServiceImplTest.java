@@ -32,7 +32,7 @@ class ItemRequestServiceImplTest {
     @Mock
     ItemStorage itemStorage;
     @InjectMocks
-    private ItemRequestServiceImpl itemRequestService;
+    ItemRequestServiceImpl itemRequestService;
 
     @Test
     void createdItemRequest() {

@@ -12,19 +12,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ItemMapperTest {
-    private final User user = User.builder()
+    final User user = User.builder()
             .id(1L)
             .email("uesr@email.com")
             .name("user")
             .build();
-    private final ItemRequest itemRequest = ItemRequest.builder()
+    final ItemRequest itemRequest = ItemRequest.builder()
             .id(1L)
             .requestorUser(user)
             .textRequest("ItemRequestText")
             .startRequest(LocalDateTime.now())
             .build();
 
-    private final Item item = Item.builder()
+    final Item item = Item.builder()
             .id(1L)
             .name("item")
             .description("description")
@@ -33,7 +33,7 @@ class ItemMapperTest {
             .requestId(itemRequest)
             .build();
 
-    private final ItemDto itemDto = new ItemDto(1L,
+    final ItemDto itemDto = new ItemDto(1L,
             "item",
             "ItemDescription",
             true,

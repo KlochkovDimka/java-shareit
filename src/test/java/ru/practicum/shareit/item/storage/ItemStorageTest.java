@@ -30,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class ItemStorageTest {
 
     @Autowired
-    private ItemStorage itemStorage;
+    ItemStorage itemStorage;
     @Autowired
-    private UserStorage userStorage;
+    UserStorage userStorage;
     @Autowired
-    private ItemRequestStorage itemRequestStorage;
+    ItemRequestStorage itemRequestStorage;
 
     @BeforeEach
     public void addItem() {
@@ -91,7 +91,7 @@ class ItemStorageTest {
     }
 
     @AfterEach
-    private void delete() {
+    void delete() {
         itemStorage.deleteAll();
         userStorage.deleteAll();
         itemRequestStorage.deleteAll();

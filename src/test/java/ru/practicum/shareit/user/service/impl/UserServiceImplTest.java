@@ -21,18 +21,18 @@ import static org.mockito.Mockito.when;
 class UserServiceImplTest {
 
     @Mock
-    private UserStorage userStorage;
+    UserStorage userStorage;
 
     @InjectMocks
-    private UserServiceImpl userService;
+    UserServiceImpl userService;
 
-    private final User user = User.builder()
+    final User user = User.builder()
             .id(1L)
             .name("user")
             .email("user@Email.com")
             .build();
 
-    private final UserDto userDto = UserDto.builder()
+    final UserDto userDto = UserDto.builder()
             .name("user")
             .email("user@Email.com")
             .build();

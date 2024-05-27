@@ -13,19 +13,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @JsonTest
 class CommentMapperTest {
 
-    private final LocalDateTime createTime = LocalDateTime.now();
-    private final Comment comment = new Comment(1L,
+    final LocalDateTime createTime = LocalDateTime.now();
+    final Comment comment = new Comment(1L,
             "comment",
             new Item(),
             new User(1L, "user@email.com", "user"),
             createTime);
 
-    private final CommentDto commentDto = new CommentDto(1L,
+    final CommentDto commentDto = new CommentDto(1L,
             "comment",
             "user",
             createTime);
 
-    private final List<Comment> commentList = List.of(comment);
+    final List<Comment> commentList = List.of(comment);
 
 
     @Test

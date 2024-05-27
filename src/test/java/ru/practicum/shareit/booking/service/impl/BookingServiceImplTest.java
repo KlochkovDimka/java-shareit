@@ -7,14 +7,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoController;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.storage.BookingStorage;
+import ru.practicum.shareit.excemples.NotExistItemException;
 import ru.practicum.shareit.excemples.NotExistStatusName;
 import ru.practicum.shareit.excemples.NotExistUserException;
-import ru.practicum.shareit.item.comment.Comment;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -24,6 +24,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,38 +32,39 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class BookingServiceImplTest {
     @Mock
-    private BookingStorage bookingStorage;
+    BookingStorage bookingStorage;
     @Mock
-    private UserStorage userStorage;
+    UserStorage userStorage;
     @Mock
-    private ItemStorage itemStorage;
+    ItemStorage itemStorage;
     @InjectMocks
-    private BookingServiceImpl bookingService;
+    BookingServiceImpl bookingService;
 
-    private LocalDateTime start = LocalDateTime.of(2024, 5, 5, 12, 12, 12);
-    private LocalDateTime end = LocalDateTime.of(2024, 5, 6, 12, 12, 12);
-    private User user = User.builder()
+    LocalDateTime start = LocalDateTime.of(2024, 5, 5, 12, 12, 12);
+    LocalDateTime end = LocalDateTime.of(2024, 5, 6, 12, 12, 12);
+    User user = User.builder()
             .id(1L)
             .email("user@email.com")
             .name("user")
             .build();
 
-    private User owner = User.builder()
+    User owner = User.builder()
             .id(2L)
             .email("userOwner@email.com")
             .name("user")
             .build();
 
-    private ItemRequest itemRequest = ItemRequest.builder()
+    ItemRequest itemRequest = ItemRequest.builder()
             .id(1L)
             .textRequest("itemRequest")
             .requestorUser(user)
             .startRequest(start)
             .build();
 
-    private Item item = Item.builder()
+    Item item = Item.builder()
             .id(1L)
             .name("item")
             .description("ItemDescription")
@@ -70,18 +72,7 @@ class BookingServiceImplTest {
             .ownerId(owner)
             .requestId(itemRequest)
             .build();
-
-    private ItemDto itemDto = ItemDto.builder()
-            .id(1L)
-            .name("item")
-            .description("description")
-            .available(true)
-            .lastBooking(null)
-            .nextBooking(null)
-            .requestId(1L)
-            .build();
-
-    private Booking booking = Booking.builder()
+    Booking booking = Booking.builder()
             .id(1L)
             .start(start)
             .end(end)
@@ -90,27 +81,10 @@ class BookingServiceImplTest {
             .status(Status.APPROVED)
             .build();
 
-    private BookingDto bookingDto = BookingDto.builder()
-            .id(1L)
-            .start(start)
-            .end(end)
-            .item(itemDto)
-            .booker(user)
-            .status(Status.APPROVED)
-            .build();
-
-    private BookingDtoController bookingDtoController = BookingDtoController.builder()
+    BookingDtoController bookingDtoController = BookingDtoController.builder()
             .itemId(1L)
             .start(start)
             .end(end)
-            .build();
-
-    private Comment comment = Comment.builder()
-            .id(1L)
-            .text("commentDescription")
-            .item(item)
-            .author(user)
-            .created(start)
             .build();
 
     @Test
@@ -126,6 +100,23 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void saveBooking_NotFoundUser() {
+        when(itemStorage.findById(anyLong())).thenReturn(Optional.of(item));
+        when(userStorage.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NotExistUserException.class,
+                () -> bookingService.saveBooking(1L, bookingDtoController));
+    }
+
+    @Test
+    void saveBooking_NotFoundItem() {
+        when(itemStorage.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class,
+                () -> bookingService.saveBooking(1L, bookingDtoController));
+    }
+
+    @Test
     void yesOrNoOfBookingRent() {
         booking.setStatus(Status.WAITING);
         when(bookingStorage.save(any())).thenReturn(booking);
@@ -135,6 +126,15 @@ class BookingServiceImplTest {
 
         assertEquals(newBookingDto.getId(), 1);
         assertEquals(newBookingDto.getStatus(), Status.REJECTED);
+    }
+
+    @Test
+    void yesOrNoOfBookingRent_NotFoundBooking() {
+        booking.setStatus(Status.WAITING);
+        when(bookingStorage.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NotExistItemException.class,
+                () -> bookingService.yesOrNoOfBookingRent(1L, "true", 1L));
     }
 
     @Test
@@ -148,7 +148,16 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getBookingsByState() {
+    void getBookingById_NotBookingUser() {
+        user.setId(2L);
+        when(bookingStorage.findById(anyLong())).thenReturn(Optional.of(booking));
+
+        assertThrows(NotExistUserException.class,
+                () -> bookingService.getBookingById(1L, 1L));
+    }
+
+    @Test
+    void getBookingsByState_Exception() {
         when(userStorage.findById(anyLong())).thenReturn(Optional.of(user));
         assertThrows(NotExistStatusName.class,
                 () -> bookingService.getBookingsByState(1L, "ALLL", 0, 1));
@@ -167,6 +176,28 @@ class BookingServiceImplTest {
         when(bookingStorage.findCurrentBookingsByUser(any(), anyLong())).thenReturn(List.of(booking));
 
         List<BookingDto> bookingDto1 = bookingService.getBookingsByState(1L, "CURRENT", 0, 1);
+
+        assertEquals(bookingDto1.size(), 1);
+    }
+
+    @Test
+    void getBookingsByStateAll_From4AndSize1() {
+        Page<Booking> bookings = new PageImpl<>(List.of(booking));
+        when(userStorage.findById(anyLong())).thenReturn(Optional.of(user));
+        when(bookingStorage.findBookingByBooker_id(anyLong(), any())).thenReturn(bookings);
+
+        List<BookingDto> bookingDto1 = bookingService.getBookingsByState(1L, "ALL", 4, 1);
+
+        assertEquals(bookingDto1.size(), 1);
+    }
+
+    @Test
+    void getBookingsByStateAll_From0AndSize1() {
+        Page<Booking> bookings = new PageImpl<>(List.of(booking));
+        when(userStorage.findById(anyLong())).thenReturn(Optional.of(user));
+        when(bookingStorage.findBookingByBooker_id(anyLong(), any())).thenReturn(bookings);
+
+        List<BookingDto> bookingDto1 = bookingService.getBookingsByState(1L, "ALL", 0, 1);
 
         assertEquals(bookingDto1.size(), 1);
     }
@@ -198,7 +229,6 @@ class BookingServiceImplTest {
         when(userStorage.findById(anyLong())).thenReturn(Optional.of(user));
         when(bookingStorage.findBookingsByBookerIdAndStatusOrderByStartAsc(anyLong(), any()))
                 .thenReturn(List.of(booking));
-        ;
 
         List<BookingDto> bookingDto1 = bookingService.getBookingsByState(1L, "WAITING", 0, 1);
 
@@ -210,9 +240,19 @@ class BookingServiceImplTest {
         when(userStorage.findById(anyLong())).thenReturn(Optional.of(user));
         when(bookingStorage.findBookingsByBookerIdAndStatusOrderByStartAsc(anyLong(), any()))
                 .thenReturn(List.of(booking));
-        ;
 
         List<BookingDto> bookingDto1 = bookingService.getBookingsByState(1L, "REJECTED", 0, 1);
+
+        assertEquals(bookingDto1.size(), 1);
+    }
+
+    @Test
+    void getBookingsByOwnerAndStateStateAll_From0AndSize1() {
+        Page<Booking> bookings = new PageImpl<>(List.of(booking));
+        when(userStorage.findById(anyLong())).thenReturn(Optional.of(user));
+        when(bookingStorage.findAllBookingsByOwnerId(anyLong(), any())).thenReturn(bookings);
+
+        List<BookingDto> bookingDto1 = bookingService.getBookingByOwnerAndState(1L, "ALL", 0, 1);
 
         assertEquals(bookingDto1.size(), 1);
     }

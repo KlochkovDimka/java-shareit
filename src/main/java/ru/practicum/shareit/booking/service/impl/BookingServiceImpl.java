@@ -24,6 +24,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
@@ -39,8 +40,10 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(rollbackOn = {NotExistItemException.class, NotExistUserException.class})
     public BookingDto saveBooking(Long userId, BookingDtoController bookingDto) {
 
-        Item item = itemStorage.findById(bookingDto.getItemId()).get();
-        User user = userStorage.findById(userId).get();
+        Item item = itemStorage.findById(bookingDto.getItemId()).orElseThrow(
+                () -> new NoSuchElementException("Not found item"));
+        User user = userStorage.findById(userId).orElseThrow(
+                () -> new NotExistUserException("Not found user"));
 
         isValidDate(bookingDto.getStart(), bookingDto.getEnd());
 
@@ -65,7 +68,8 @@ public class BookingServiceImpl implements BookingService {
 
         boolean isApproved = Boolean.parseBoolean(approved);
 
-        Booking booking = bookingStorage.findById(bookingId).get();
+        Booking booking = bookingStorage.findById(bookingId).orElseThrow(
+                () -> new NotExistItemException("Not found booking"));
         if (!Objects.equals(booking.getItem().getOwnerId().getId(), userId)) {
             throw new NotExistUserException("Подтвердить может только хозяин вещи");
         }
@@ -89,7 +93,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto getBookingById(Long userId, Long bookingId) {
-        Booking booking = bookingStorage.findById(bookingId).get();
+        Booking booking = bookingStorage.findById(bookingId).orElseThrow(
+                () -> new NoSuchElementException("Not found booking")
+        );
         if (userId != booking.getBooker().getId() &&
                 userId != booking.getItem().getOwnerId().getId()) {
             throw new NotExistUserException("Conflict user");
@@ -148,8 +154,7 @@ public class BookingServiceImpl implements BookingService {
                                 ownerId,
                                 pageable)
                         .getContent();
-                List<BookingDto> bookingDtoList = BookingMapper.convertToListBookingDto(bookingList);
-                return bookingDtoList;
+                return BookingMapper.convertToListBookingDto(bookingList);
             case "CURRENT":
                 return BookingMapper.convertToListBookingDto(
                         bookingStorage.findBookersByOwnerIdCurrent(

@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ItemRequestStorageTest {
 
     @Autowired
-    private ItemRequestStorage itemRequestStorage;
+    ItemRequestStorage itemRequestStorage;
     @Autowired
-    private UserStorage userStorage;
+    UserStorage userStorage;
 
     @BeforeEach
-    private void addUser() {
+    void addUser() {
         User user = new User();
         user.setName("user");
         user.setEmail("user@email.com");

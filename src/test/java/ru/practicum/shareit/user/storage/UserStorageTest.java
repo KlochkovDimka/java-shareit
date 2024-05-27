@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserStorageTest {
 
     @Autowired
-    private UserStorage userStorage;
+    UserStorage userStorage;
 
     @BeforeEach
-    private void createUser() {
+    void createUser() {
         User user = User.builder()
                 .email("user@email.com")
                 .name("user")

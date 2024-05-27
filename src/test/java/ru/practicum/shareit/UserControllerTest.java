@@ -16,10 +16,10 @@ import static org.hamcrest.Matchers.hasSize;
 public class UserControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Test
-    public void createUserTest() throws Exception {
+    void createUserTest() throws Exception {
         String jsonStringUserOne = "{\n" +
                 "    \"name\": \"user\",\n" +
                 "    \"email\": \"user@user.com\"\n" +
@@ -48,7 +48,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserEmailByIdTest() throws Exception {
+    void updateUserEmailByIdTest() throws Exception {
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"email\": \"updateUserTwo@user.com\"\n" +
                 "}";
@@ -62,7 +62,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserNameByIdTest() throws Exception {
+    void updateUserNameByIdTest() throws Exception {
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"name\": \"updateUserTwo\"\n" +
                 "}";
@@ -76,7 +76,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserByFiledIdTest() throws Exception {
+    void updateUserByFiledIdTest() throws Exception {
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"name\": \"updateUser\",\n" +
                 "    \"email\": \"updateUser@user.com\"\n" +
@@ -88,7 +88,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserByIdTest() throws Exception {
+    void updateUserByIdTest() throws Exception {
         String jsonStringUpdateUserOne = "{\n" +
                 "    \"name\": \"updateUser\",\n" +
                 "    \"email\": \"updateUser@user.com\"\n" +
@@ -103,7 +103,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getAllUSerTest() throws Exception {
+    void getAllUSerTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(3)));
@@ -111,13 +111,13 @@ public class UserControllerTest {
 
 
     @Test
-    public void getUserByFiledIdTest() throws Exception {
+    void getUserByFiledIdTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/users/5"))
                 .andExpect(status().is(404));
     }
 
     @Test
-    public void getUserIdTest() throws Exception {
+    void getUserIdTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/users/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200))
@@ -127,7 +127,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserFiledEmailTest() throws Exception {
+    void createUserFiledEmailTest() throws Exception {
         String jsonStringUserOne = "{\n" +
                 "    \"name\": \"user\",\n" +
                 "}";
@@ -138,7 +138,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserFiledNameTest() throws Exception {
+    void createUserFiledNameTest() throws Exception {
         String jsonStringUserOne = "{\n" +
                 "    \"email\": \"user@user.com\"\n" +
                 "}";

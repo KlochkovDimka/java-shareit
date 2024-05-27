@@ -25,19 +25,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 class BookingControllerTest {
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
     @MockBean
-    private UserService userService;
+    UserService userService;
     @MockBean
-    private BookingService bookingService;
+    BookingService bookingService;
     @MockBean
-    private ItemService itemService;
+    ItemService itemService;
     @MockBean
-    private ItemRequestService itemRequestService;
+    ItemRequestService itemRequestService;
 
-    private BookingDtoController bookingDtoController = BookingDtoController.builder()
+    BookingDtoController bookingDtoController = BookingDtoController.builder()
             .itemId(1L)
             .start(LocalDateTime.of(2025, 1, 1, 12, 12, 12))
             .end(LocalDateTime.of(2025, 2, 2, 12, 12, 12))

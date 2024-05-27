@@ -35,31 +35,31 @@ import static org.mockito.Mockito.when;
 class ItemServiceImplTest {
 
     @Mock
-    private ItemStorage itemStorage;
+    ItemStorage itemStorage;
     @Mock
-    private UserStorage userStorage;
+    UserStorage userStorage;
     @Mock
-    private BookingStorage bookingStorage;
+    BookingStorage bookingStorage;
     @Mock
-    private ItemRequestStorage itemRequestStorage;
+    ItemRequestStorage itemRequestStorage;
     @Mock
-    private CommentRepository commentRepository;
+    CommentRepository commentRepository;
     @InjectMocks
-    private ItemServiceImpl itemService;
-    private User user = User.builder()
+    ItemServiceImpl itemService;
+    User user = User.builder()
             .id(1L)
             .email("user@email.com")
             .name("user")
             .build();
 
-    private ItemRequest itemRequest = ItemRequest.builder()
+    ItemRequest itemRequest = ItemRequest.builder()
             .id(1L)
             .textRequest("itemRequest")
             .requestorUser(user)
             .startRequest(LocalDateTime.now())
             .build();
 
-    private Item item = Item.builder()
+    Item item = Item.builder()
             .id(1L)
             .name("item")
             .description("ItemDescription")
@@ -68,7 +68,7 @@ class ItemServiceImplTest {
             .requestId(itemRequest)
             .build();
 
-    private Booking booking = Booking.builder()
+    Booking booking = Booking.builder()
             .id(1L)
             .start(LocalDateTime.now())
             .end(LocalDateTime.now())
@@ -77,7 +77,7 @@ class ItemServiceImplTest {
             .status(Status.APPROVED)
             .build();
 
-    private Comment comment = Comment.builder()
+    Comment comment = Comment.builder()
             .id(1L)
             .text("commentDescription")
             .item(item)

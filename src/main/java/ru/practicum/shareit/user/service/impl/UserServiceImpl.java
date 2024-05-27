@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.excemples.NotExistUserEmailException;
+import ru.practicum.shareit.excemples.NotExistUserException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +35,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto getUserById(long id) {
-        return UserMapper.convertUserDto(userStorage.findById(id).get());
+        return UserMapper.convertUserDto(userStorage.findById(id).orElseThrow(
+                () -> new NotExistUserException("Not found user")
+        ));
     }
 
     @Override
@@ -53,15 +54,9 @@ public class UserServiceImpl implements UserService {
         return UserMapper.convertUserDto(updateUser);
     }
 
-    private void isEmailUser(UserDto user) {
-        Optional<User> isUser = userStorage.findUsersByEmail(user.getEmail());
-        if (isUser.isPresent()) {
-            throw new NotExistUserEmailException(String.format("Email = %s уже существует", user.getEmail()));
-        }
-    }
-
     private void updateFieldUser(User user, long id) {
-        User oldUser = userStorage.findById(id).get();
+        User oldUser = userStorage.findById(id).orElseThrow(
+                () -> new NotExistUserException("Not found user"));
         if (user.getEmail() == null) {
             user.setEmail(oldUser.getEmail());
         }

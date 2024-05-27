@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.storage.BookingStorage;
 import ru.practicum.shareit.excemples.NotExistItemException;
+import ru.practicum.shareit.excemples.NotExistUserException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.comment.CommentMapper;
@@ -25,9 +27,9 @@ import ru.practicum.shareit.status.Status;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,27 +45,27 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    @Transactional()
+    @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
 
         if (itemDto.getRequestId() == null) {
             Item item = itemStorage.save(ItemMapper.convertToEntity(itemDto,
-                    userStorage.findById(userId).get()));
+                    findUserInStorage(userId)));
             return ItemMapper.convertToItemDto(item);
         }
         Optional<ItemRequest> itemRequest = itemRequestStorage.findById(itemDto.getRequestId());
         Item item = ItemMapper.convertToEntityWhitRequestItem(itemDto,
-                userStorage.findById(userId).get(),
-                itemRequest.get());
+                findUserInStorage(userId),
+                itemRequest.orElse(null));
 
         return ItemMapper.convertToItemDtoWithItemRequestItemId(itemStorage.save(item));
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ItemWithComment getItemById(long itemId, long userId) {
 
-        Item item = itemStorage.findById(itemId).get();
+        Item item = findItemInStorage(itemId);
         ItemWithComment itemDto = ItemMapper.convertToItemWhitComment(item);
 
         if (userId == item.getOwnerId().getId()) {
@@ -89,12 +91,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ItemWithComment> getItemsByUserId(long userId, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
 
         List<ItemWithComment> items = ItemMapper.convertListToItemWithComments(
-                itemStorage.findItemByOwnerId(userStorage.findById(userId).get(), pageable).getContent());
+                itemStorage.findItemByOwnerId(findUserInStorage(userId), pageable).getContent());
 
         for (ItemWithComment item : items) {
             item.setLastBooking(BookingMapper.convertToBookingItemDto(
@@ -114,8 +116,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional()
     public ItemDto updateItem(ItemDto itemDto, long userId, long itemId) {
-        User user = userStorage.findById(userId).get();
+        User user = findUserInStorage(userId);
         itemDto.setId(itemId);
         Item item = ItemMapper.convertToEntity(itemDto, user);
         Item newItem = updateFieldItem(item);
@@ -123,6 +126,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getSearchItemDto(String text, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
         if (text.isBlank()) {
@@ -139,6 +143,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto createComment(long itemId, long userId, CommentDto commentDto) {
         List<Booking> bookings = bookingStorage
                 .findBookingsByItemIdAndBookerIdAndEndBefore(itemId, userId, LocalDateTime.now());
@@ -148,8 +153,8 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Comment comment = CommentMapper.convertToComment(commentDto);
-        comment.setItem(itemStorage.findById(itemId).get());
-        comment.setAuthor(userStorage.findById(userId).get());
+        comment.setItem(findItemInStorage(itemId));
+        comment.setAuthor(findUserInStorage(userId));
         comment.setCreated(LocalDateTime.now());
 
         return CommentMapper.convertToCommentDto(
@@ -157,7 +162,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Item updateFieldItem(Item item) {
-        Item oldItem = itemStorage.findById(item.getId()).get();
+        Item oldItem = findItemInStorage(item.getId());
         if (item.getName() != null) {
             oldItem.setName(item.getName());
         }
@@ -168,5 +173,15 @@ public class ItemServiceImpl implements ItemService {
             oldItem.setAvailable(item.getAvailable());
         }
         return oldItem;
+    }
+
+    private User findUserInStorage(long userId) {
+        return userStorage.findById(userId).orElseThrow(
+                () -> new NotExistUserException("Not found user"));
+    }
+
+    private Item findItemInStorage(long itemId) {
+        return itemStorage.findById(itemId).orElseThrow(
+                () -> new NoSuchElementException("Not found item"));
     }
 }
