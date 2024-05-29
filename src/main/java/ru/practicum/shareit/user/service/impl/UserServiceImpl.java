@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.excemples.NotExistUserEmailException;
+import ru.practicum.shareit.excemples.NotExistUserException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,25 +18,26 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
-    private final UserMapper userMapper;
 
     @Override
     public UserDto crateUser(UserDto userDto) {
-        User user = userStorage.save(userMapper.convertToUser(userDto));
-        return userMapper.convertUserDto(user);
+        User user = userStorage.save(UserMapper.convertToUser(userDto));
+        return UserMapper.convertUserDto(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         return userStorage.findAll().stream()
-                .map(userMapper::convertUserDto)
+                .map(UserMapper::convertUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public UserDto getUserById(long id) {
-        return userMapper.convertUserDto(userStorage.findById(id).get());
+        return UserMapper.convertUserDto(userStorage.findById(id).orElseThrow(
+                () -> new NotExistUserException("Not found user")
+        ));
     }
 
     @Override
@@ -47,22 +47,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(long id, UserDto userDto) {
-        User updateUser = userMapper.convertToUser(userDto);
+        User updateUser = UserMapper.convertToUser(userDto);
         updateUser.setId(id);
         updateFieldUser(updateUser, id);
         userStorage.save(updateUser);
-        return userMapper.convertUserDto(updateUser);
-    }
-
-    private void isEmailUser(UserDto user) {
-        Optional<User> isUser = userStorage.findUsersByEmail(user.getEmail());
-        if (isUser.isPresent()) {
-            throw new NotExistUserEmailException(String.format("Email = %s уже существует", user.getEmail()));
-        }
+        return UserMapper.convertUserDto(updateUser);
     }
 
     private void updateFieldUser(User user, long id) {
-        User oldUser = userStorage.findById(id).get();
+        User oldUser = userStorage.findById(id).orElseThrow(
+                () -> new NotExistUserException("Not found user"));
         if (user.getEmail() == null) {
             user.setEmail(oldUser.getEmail());
         }

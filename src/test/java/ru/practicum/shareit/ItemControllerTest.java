@@ -18,10 +18,10 @@ import static org.hamcrest.Matchers.hasSize;
 public class ItemControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Test
-    public void createItemToTest() throws Exception {
+    void createItemToTest() throws Exception {
 
         String jsonStringItemOne = "{\n" +
                 "    \"name\": \"Отвертка\",\n" +
@@ -41,7 +41,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void createItemFiledDescriptionTest() throws Exception {
+    void createItemFiledDescriptionTest() throws Exception {
         String jsonString = "{\n" +
                 "    \"name\": \"Дрель\",\n" +
                 "    \"available\": true\n" +
@@ -55,7 +55,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void createItemFiledNameTest() throws Exception {
+    void createItemFiledNameTest() throws Exception {
         String jsonString = "{\n" +
                 "    \"description\": \"Простая дрель\",\n" +
                 "    \"available\": true\n" +
@@ -68,7 +68,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void createItemNotFoundUserIdTest() throws Exception {
+    void createItemNotFoundUserIdTest() throws Exception {
         String jsonString = "{\n" +
                 "    \"name\": \"Дрель\",\n" +
                 "    \"description\": \"Простая дрель\",\n" +
@@ -82,7 +82,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void createItemWithoutUserTest() throws Exception {
+    void createItemWithoutUserTest() throws Exception {
         String jsonString = "{\n" +
                 "    \"name\": \"Дрель\",\n" +
                 "    \"description\": \"Простая дрель\",\n" +
@@ -95,20 +95,20 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void getItemByIdTest() throws Exception {
+    void getItemByIdTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/items/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(400));
     }
 
     @Test
-    public void getItemByFiledIdTest() throws Exception {
+    void getItemByFiledIdTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/items/3"))
                 .andExpect(status().is(400));
     }
 
     @Test
-    public void getItemsByUserIdTest() throws Exception {
+    void getItemsByUserIdTest() throws Exception {
         String jsonStringUserOne = "{\n" +
                 "    \"name\": \"user\",\n" +
                 "    \"email\": \"user@user.com\"\n" +
@@ -145,7 +145,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void updateItem() throws Exception {
+    void updateItem() throws Exception {
         String jsonStringItemOne = "{\n" +
                 "    \"name\": \"Отвертка\",\n" +
                 "    \"description\": \"Аккумуляторная отвертка\",\n" +
@@ -179,7 +179,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void updateItemFiledUserIdTest() throws Exception {
+    void updateItemFiledUserIdTest() throws Exception {
 
         String jsonString = "{\n" +
                 "    \"name\": \"Дрель\",\n" +
@@ -195,14 +195,14 @@ public class ItemControllerTest {
     }
 
     @Test
-    public void searchItem() throws Exception {
+    void searchItem() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("http://localhost:8080/items/search?text=Отвертка"))
                 .andExpect(status().is(200));
     }
 
     @Test
-    public void searchEmptyText() throws Exception {
+    void searchEmptyText() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("http://localhost:8080/items/search?text="))
                 .andExpect(status().is(200))
