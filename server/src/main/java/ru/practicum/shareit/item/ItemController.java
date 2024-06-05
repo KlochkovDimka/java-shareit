@@ -20,22 +20,24 @@ import java.util.List;
 @Slf4j
 public class ItemController {
 
+    private final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
+
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto postItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto postItem(@RequestHeader(REQUEST_HEADER_USER) long userId,
                             @RequestBody ItemDto itemDto) {
         return itemService.createItem(itemDto, userId);
     }
 
     @GetMapping("{itemId}")
     public ItemWithComment getItemById(@PathVariable long itemId,
-                                       @RequestHeader("X-Sharer-User-Id") long userId) {
+                                       @RequestHeader(REQUEST_HEADER_USER) long userId) {
         return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping()
-    public List<ItemWithComment> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
+    public List<ItemWithComment> getItemsByUserId(@RequestHeader(REQUEST_HEADER_USER) long userId,
                                                   @RequestParam(defaultValue = "0") @Positive int from,
                                                   @RequestParam(defaultValue = "10") @Positive int size) {
         return itemService.getItemsByUserId(userId, from, size);
@@ -43,7 +45,7 @@ public class ItemController {
 
     @PatchMapping("{itemId}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") long userId,
+                              @RequestHeader(REQUEST_HEADER_USER) long userId,
                               @PathVariable long itemId) {
         return itemService.updateItem(itemDto, userId, itemId);
     }
@@ -62,7 +64,7 @@ public class ItemController {
 
     @PostMapping("{itemId}/comment")
     public CommentDto createPost(@PathVariable long itemId,
-                                 @RequestHeader("X-Sharer-User-Id") long userId,
+                                 @RequestHeader(REQUEST_HEADER_USER) long userId,
                                  @RequestBody CommentDto commentDto) {
         return itemService.createComment(itemId, userId, commentDto);
     }

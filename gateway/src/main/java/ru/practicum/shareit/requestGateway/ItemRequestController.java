@@ -16,28 +16,30 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 public class ItemRequestController {
 
+    private final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
+
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
-    public ResponseEntity<Object> createdItemRequest(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> createdItemRequest(@RequestHeader(REQUEST_HEADER_USER) long userId,
                                                      @Valid @RequestBody ItemRequestDto itemRequestDto) {
         return itemRequestClient.createdItemRequest(itemRequestDto, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getListItemRequestByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> getListItemRequestByUserId(@RequestHeader(REQUEST_HEADER_USER) long userId) {
         return itemRequestClient.getListItemRequestByUserId(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllListItemRequest(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> getAllListItemRequest(@RequestHeader(REQUEST_HEADER_USER) long userId,
                                                         @RequestParam(defaultValue = "0") @Positive int from,
                                                         @RequestParam(defaultValue = "10") @Positive int size) {
         return itemRequestClient.getAllListItemRequest(userId, from, size);
     }
 
     @GetMapping("{requestId}")
-    public ResponseEntity<Object> getItemRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> getItemRequestById(@RequestHeader(REQUEST_HEADER_USER) long userId,
                                                      @Positive @PathVariable long requestId) {
         return itemRequestClient.getItemRequestById(userId, requestId);
     }
