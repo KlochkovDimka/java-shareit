@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestController {
 
-    private final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
+    private static final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
 
     private final ItemRequestService itemRequestService;
 

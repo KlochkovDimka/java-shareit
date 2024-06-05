@@ -20,7 +20,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Slf4j
 public class ItemController {
 
-    private final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
+    private static final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
 
     private final ItemClient itemClient;
 

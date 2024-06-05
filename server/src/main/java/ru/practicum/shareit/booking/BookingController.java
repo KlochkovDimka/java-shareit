@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class BookingController {
 
-    private final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
+    private static final String REQUEST_HEADER_USER = "X-Sharer-User-Id";
 
     private final BookingService bookingService;
 
